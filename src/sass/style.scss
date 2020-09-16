@@ -1,4 +1,8 @@
-$hauteur: 100px;
+@import "variables";
+
+h1{
+  color: $couleur;
+}
 
 #header {
  height: $hauteur;
@@ -16,4 +20,4 @@ $hauteur: 100px;
 }
 
 
-@import "footer"
+@import "footer";
