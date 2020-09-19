@@ -3,13 +3,21 @@ const { src, dest, series, parallel } = require('gulp');
 
 const sass = require('gulp-sass');
 
+const include = require('gulp-include');
+
 const clean = require('gulp-clean');
 
 const svgo = require('gulp-svgo');
 
+const terser = require('gulp-terser');
+
 sass.compiler = require('node-sass');
 
 const gm = require('gulp-gm');
+
+const ts = require("gulp-typescript");
+
+var tsProject = ts.createProject("tsconfig.json");
 
 function photo(cb){
   return src('./src/photo/**/*.*')
@@ -39,14 +47,24 @@ function css(cb) {
   return src('./src/sass/**/*.scss')
   .pipe(sass().on('error', sass.logError))
   .pipe(dest('./dist/css'));
-  };
+};
 
-  const inclu = require('gulp-include');
 
 function copiehtml(cb){
   return src('./src/html/index.html')
-  .pipe(inclu())
+  .pipe(include())
   .pipe(dest('./dist'));
 }
 
-exports.default =parallel(css, copiehtml, photo, svg);
+
+function typescript() {
+ return tsProject.src().pipe(tsProject({
+   target: "es6",
+ })).js
+ .pipe(terser())
+ .pipe(dest("dist"));
+};
+
+exports.typescript = typescript;
+
+exports.default = series(parallel(copiehtml, typescript));
